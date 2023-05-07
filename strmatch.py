@@ -1,8 +1,6 @@
 """^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 In this module I give an implementation of the Naive and KMP string matching algorithms.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"""
-
-
 # ------------------------------------------------------------------------------------------------------------------- #
 # This function implements the Naive algorithm.
 # The searched pattern is compared with every substring of the text starting from the first character and stepping one

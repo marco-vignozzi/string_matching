@@ -1,14 +1,14 @@
-"""^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+"""^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 In this module I give an implementation of the Naive and KMP string matching algorithms.
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"""
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"""
 
 
-# ----------------------------------------------------------------------------------------------------- #
+# ------------------------------------------------------------------------------------------------------------------- #
 # This function implements the Naive algorithm.
-# The searched pattern is compared with every substring of the text starting from the first character
-# and stepping one char at a time. It receives in input the searched pattern and the text, both
-# in the form of a string, and returns the list of all matching offsets found.
-# ----------------------------------------------------------------------------------------------------- #
+# The searched pattern is compared with every substring of the text starting from the first character and stepping one
+# char at a time. It receives in input the searched pattern and the text, both in the form of a string, and returns the
+# list of all matching offsets found.
+# ------------------------------------------------------------------------------------------------------------------- #
 
 def naive_sm(pattern, text):
     offsets = list()
@@ -23,14 +23,14 @@ def naive_sm(pattern, text):
     return offsets
 
 
-# ----------------------------------------------------------------------------------------------------- #
+# ------------------------------------------------------------------------------------------------------------------- #
 # These functions implement the Knuth-Morris-Pratt (KMP) algorithm.
-# The searched pattern is pre-elaborated by the algorithm with the compute_pi_function() method.
-# It takes the pattern as an input and returns a list (pi) which is equal in length to the pattern.
-# Every index stores the length of the greatest prefix equal to the suffix of the pattern cut to the
-# length specified by the index. In this way the algorithm may notice the absence of the pattern in the
-# already matched chars in order to skip them, gaining time.
-# ----------------------------------------------------------------------------------------------------- #
+# The searched pattern is pre-elaborated with the compute_pi_function() method. It takes the pattern as an input and
+# returns a list (pi) which is equal in length to the pattern. Every index stores the length of the greatest prefix
+# equal to the suffix of the pattern cut to the length specified by the index.
+# In this way the algorithm may notice the absence of the pattern in the already matched chars in order to skip them,
+# gaining time.
+# ------------------------------------------------------------------------------------------------------------------- #
 
 def compute_pi_function(word):
     m = len(word)

@@ -26,10 +26,13 @@ def rs_file_generator(alphabet, min_l, max_l, text_l, file_path):
 # ------------------------------------------------------------------------------------------------------------------- #
 # Here it generates a .txt file with "text_length" random hexadecimal values of length 8.
 # ------------------------------------------------------------------------------------------------------------------- #
+#
+# text_length = 1000000
+# hex_alpha = list(['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+# rs_file_generator(hex_alpha, 8, 8, text_length, "res/rand_hex.txt")
 
-text_length = 1000000
-hex_alpha = list(['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
-rs_file_generator(hex_alpha, 8, 8, text_length, "res/rand_hex.txt")
+t1 = test.Test("res/bible.txt", "freedom", 5)
+print(f'kmp time: {t1.kmp_time : .6f}\t naive time: {t1.naive_time : .6f}')
 
 # ----------------------------------------------------------------------------------------------------------- #
 # Then it writes the results in 2 distinct files.

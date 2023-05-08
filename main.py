@@ -3,40 +3,20 @@ In this module we can run various tests from the test.py module in order to comp
 given in the strmatch.py module.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"""
 import test
-import random
+import timeit
 
 
-# ------------------------------------------------------------------------------------------------------------------- #
-# This function name stands for "random strings file generator", as it creates a .txt file with random strings.
-# It takes in input a list of symbols (alphabet) and the range of the lengths of the strings you want to generate,as
-# well as the number. It returns a file with the number of strings requested.
-# ------------------------------------------------------------------------------------------------------------------- #
-
-def rs_file_generator(alphabet, min_l, max_l, text_l, file_path):
-    with open(file_path, "w") as file:
-        for i in range(0, text_l):
-            new_str = ''
-            rand_str_size = random.randrange(0, 1001) % (max_l - min_l + 1) + min_l
-            for j in range(0, rand_str_size):
-                new_str += alphabet[random.randrange(0, 1001) % len(alphabet)]
-            file.write(f'{new_str} ')
-    return
+test_rep = 10
+t1 = test.Test("res/rand_bin.txt", " 1000")
 
 
-# ------------------------------------------------------------------------------------------------------------------- #
-# Here it generates a .txt file with "text_length" random hexadecimal values of length 8.
-# ------------------------------------------------------------------------------------------------------------------- #
-#
-# text_length = 1000000
-# hex_alpha = list(['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
-# rs_file_generator(hex_alpha, 8, 8, text_length, "res/rand_hex.txt")
-
-t1 = test.Test("res/bible.txt", "freedom", 5)
-print(f'kmp time: {t1.kmp_time : .6f}\t naive time: {t1.naive_time : .6f}')
+naive_time = min(timeit.repeat(t1.run_naive_sm, repeat=test_rep, number=1))
+kmp_time = min(timeit.repeat(t1.run_kmp_sm, repeat=test_rep, number=1))
+print(f'kmp time: {kmp_time : .5f}\t naive time: {naive_time : .5f}')
 
 # ----------------------------------------------------------------------------------------------------------- #
 # Then it writes the results in 2 distinct files.
-# # ----------------------------------------------------------------------------------------------------------- #
+# ----------------------------------------------------------------------------------------------------------- #
 #
 # with open("docs/naive.txt", "w") as naive:
 #     naive.write('NAIVE ALGORITHM\n' +

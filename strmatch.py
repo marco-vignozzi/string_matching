@@ -24,12 +24,13 @@ def naive_sm(pattern, text):
 
 
 # ------------------------------------------------------------------------------------------------------------------- #
-# These functions implement the Knuth-Morris-Pratt (KMP) algorithm.
-# The searched pattern is pre-elaborated with the compute_pi_function() method. It takes the pattern as an input and
-# returns a list (pi) which is equal in length to the pattern. Every index stores the length of the greatest prefix
-# equal to the suffix of the pattern cut to the length specified by the index.
-# In this way the algorithm may notice the absence of the pattern in the already matched chars in order to skip them,
-# gaining time.
+# The functions below implement the Knuth-Morris-Pratt (KMP) algorithm.
+# The searched pattern is pre-elaborated with the "compute_pi_function()" utility method. It takes the pattern as an
+# input and returns a list (pi) which is equal in length to the pattern. Every index stores the length of the greatest
+# prefix equal to the suffix of the pattern cut to the length specified by the index.The "pi" list is then used by the
+# main function "kmp_sm()". In this way the algorithm may notice the absence of the pattern in the already matched
+# chars in order to skip them, buying time.
+# The "kmp_sm()" function deals with the same input of the "naive_sm()" and has the same output.
 # ------------------------------------------------------------------------------------------------------------------- #
 
 def compute_pi_function(word):

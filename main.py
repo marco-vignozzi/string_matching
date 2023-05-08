@@ -1,14 +1,25 @@
 """^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-In this module we can run various tests from the test.py module in order to compare the string matching algorithms
-given in the strmatch.py module.
+In this module we run various tests from the test.py module in order to compare the string matching algorithms given
+in the strmatch.py module.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"""
 import test
 import timeit
 import strgenerator as sg
 
+
+# ----------------------------------------------------------------------------------------------------------- #
+# Here we can initialize some variables which will define the tests.
+# ----------------------------------------------------------------------------------------------------------- #
+
 test_rep = 10
 pattern = sg.regex_str_generator('(ab)^1000(b)')
 t1 = test.Test("res/regex_ab.txt", pattern)
+
+
+# ----------------------------------------------------------------------------------------------------------- #
+# Here it computes the times spent by the 2 algorithms. It only considers the best times as it's explained to
+# be the best way to produce meaningful results in the "timeit" module documentation.
+# ----------------------------------------------------------------------------------------------------------- #
 
 naive_time = min(timeit.repeat(t1.run_naive_sm, repeat=test_rep, number=1))
 kmp_time = min(timeit.repeat(t1.run_kmp_sm, repeat=test_rep, number=1))

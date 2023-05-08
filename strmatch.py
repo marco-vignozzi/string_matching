@@ -1,6 +1,7 @@
 """^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 In this module I give an implementation of the Naive and KMP string matching algorithms.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"""
+import strgenerator
 
 
 # ------------------------------------------------------------------------------------------------------------------- #
@@ -62,3 +63,7 @@ def kmp_sm(pattern, text):
             offsets.append(i - q + 1)
             q = pi[q - 1]
     return offsets
+
+
+if __name__ == '__main__':
+    compute_pi_function(strgenerator.regex_str_generator("(a)^1001"))

@@ -8,23 +8,45 @@ import strgenerator as sg
 
 
 # ----------------------------------------------------------------------------------------------------------- #
+# TODO: add description and code to this segment
+# ----------------------------------------------------------------------------------------------------------- #
+
+def create_docs():
+    pass
+
+
+def create_plots():
+    pass
+
+
+# ----------------------------------------------------------------------------------------------------------- #
 # Here we can initialize some variables which will define the tests.
 # ----------------------------------------------------------------------------------------------------------- #
 
 test_rep = 10
-pattern = sg.regex_str_generator('(ab)^1000(b)')
-t1 = test.Test("res/regex_ab.txt", pattern)
-
+start = 100
+stop = 1000
+step = 50
+naive_times = list()
+kmp_times = list()
+naive_offsets = dict()
+kmp_offsets = dict()
 
 # ----------------------------------------------------------------------------------------------------------- #
-# Here it computes the times spent by the 2 algorithms. It only considers the best times as it's explained to
+# Here it computes the times spent by the 2 algorithms. It only considers the best times, as it's explained to
 # be the best way to produce meaningful results in the "timeit" module documentation.
 # ----------------------------------------------------------------------------------------------------------- #
 
-naive_time = min(timeit.repeat(t1.run_naive_sm, repeat=test_rep, number=1))
-kmp_time = min(timeit.repeat(t1.run_kmp_sm, repeat=test_rep, number=1))
-print(f'kmp time: {kmp_time : .5f}\t naive time: {naive_time : .5f}')
+for n in range(start, stop+1, step):
+    pattern = sg.regex_str_generator(f'(a)^{n}')
+    t = test.Test("res/regex_ab.txt", pattern)
+    naive_times.append(min(timeit.repeat(t.run_naive_sm, repeat=test_rep, number=1)))
+    kmp_times.append(min(timeit.repeat(t.run_kmp_sm, repeat=test_rep, number=1)))
+    kmp_offsets[n] = t.kmp_offsets
+    naive_offsets[n] = t.naive_offsets
 
+print(f'naive times: ' + str([f'{i: .6f}' for i in naive_times]))
+print(f'\nkmp times: ' + str([f'{i: .6f}' for i in kmp_times]))
 # ----------------------------------------------------------------------------------------------------------- #
 # Then it writes the results in 2 distinct files.
 # ----------------------------------------------------------------------------------------------------------- #

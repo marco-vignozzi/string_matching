@@ -4,11 +4,11 @@ given in the strmatch.py module.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"""
 import test
 import timeit
-
+import strgenerator as sg
 
 test_rep = 10
-t1 = test.Test("res/rand_bin.txt", " 1000")
-
+pattern = sg.regex_str_generator('(ab)^1000(b)')
+t1 = test.Test("res/regex_ab.txt", pattern)
 
 naive_time = min(timeit.repeat(t1.run_naive_sm, repeat=test_rep, number=1))
 kmp_time = min(timeit.repeat(t1.run_kmp_sm, repeat=test_rep, number=1))

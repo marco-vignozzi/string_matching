@@ -39,6 +39,7 @@ def rand_str_generator(alphabet, min_l, max_l, text_l, file_path=None):
 # It's also possible to specify a "file_path" in which case the behavior is the same as above.
 # It doesn't support values choice i.e. (a + b) or (a)* .
 # ------------------------------------------------------------------------------------------------------------------- #
+# TODO: add reps description
 
 def regex_str_generator(expr, file_path=None, reps=1):
     elements = list()

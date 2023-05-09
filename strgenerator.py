@@ -66,10 +66,12 @@ ab_alpha = list(['a', 'b'])
 hex_alpha = list(['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
 n = 10000
 m = 1000
-reg_ex = f'(a)^{n}(b)(a)'
+reg_ex = f'(abc)^{n//3}(c)(ba)^{n//3}(c)^{n//4}(ab)^{m//2}(ca)^{m}'
 text_words = 1000000
 
 
 if __name__ == '__main__':
-    print(regex_str_generator(reg_ex, "res/regex_ab.txt"))
+    regex_str_generator(f'(ab)^{n}(b)(ab)^{m}', 'res/regex_ab.txt')
+    # print(regex_str_generator(reg_ex, "res/regex_abc.txt"))
+    # regex_str_generator(f'(a)^{n}', 'res/regex_a.txt')
 # rand_str_generator(bin_alpha, 8, 8, text_words, "res/rand_bin.txt")

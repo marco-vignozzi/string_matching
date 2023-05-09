@@ -46,7 +46,7 @@ with open(src3, 'r', encoding='utf-8') as file:
 # the given "step" as the queried pattern. The text is a longer sequence of 'a'.
 # It instantiates a test and it computes the times for both the naive and kmp algorithms, storing them into a dict.
 # ------------------------------------------------------------------------------------------------------------------- #
-
+# TODO: add description to this test cases
 t1 = test.Test()
 for n in range(start, stop+1, step):
     pattern = sg.regex_str_generator(f'(a)^{n}')

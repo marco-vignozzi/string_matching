@@ -27,8 +27,8 @@ def rand_str_generator(alphabet, min_l, max_l, text_l, file_path=None):
 
 
 # ------------------------------------------------------------------------------------------------------------------- #
-# This function returns a string which matches the "regex" syntax passed as a parameter.
-# The regular expression syntax should be given in the form (using BNF notation):
+# This function returns a string which matches the syntax of the "expr" passed as a parameter.
+# The syntax should be given in a simil regular expression form (using BNF notation):
 #
 # <syntax> ::= <sequence>[^<number>][<syntax>]
 # <sequence> ::= (<string>)
@@ -40,17 +40,18 @@ def rand_str_generator(alphabet, min_l, max_l, text_l, file_path=None):
 # It doesn't support values choice i.e. (a + b) or (a)* .
 # ------------------------------------------------------------------------------------------------------------------- #
 
-def regex_str_generator(regex, file_path=None):
+def regex_str_generator(expr, file_path=None, reps=1):
     elements = list()
-    elements = [x for x in re.split("[() +]", regex) if x]
-    final_str = ""
-    for i in range(0, len(elements)):
-        if elements[i][0] == '^':
-            pass
-        elif i != len(elements)-1 and elements[i+1][0] == '^':
-            final_str += elements[i] * int(elements[i + 1].replace('^', ''))
-        else:
-            final_str += elements[i]
+    elements = [x for x in re.split("[() +]", expr) if x]
+    final_str = ''
+    for r in range(0, reps+1):
+        for i in range(0, len(elements)):
+            if elements[i][0] == '^':
+                pass
+            elif i != len(elements)-1 and elements[i+1][0] == '^':
+                final_str += elements[i] * int(elements[i + 1].replace('^', ''))
+            else:
+                final_str += elements[i]
     if file_path:
         with open(file_path, "w") as file:
             file.write(final_str)
@@ -64,14 +65,15 @@ def regex_str_generator(regex, file_path=None):
 bin_alpha = list(['0', '1'])
 ab_alpha = list(['a', 'b'])
 hex_alpha = list(['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
-n = 10000
+n = 100
 m = 1000
-reg_ex = f'(abc)^{n//3}(c)(ba)^{n//3}(c)^{n//4}(ab)^{m//2}(ca)^{m}'
+reps = 10000
+expr = f'(abc)^{n//3}(c)(ba)^{n//3}(c)^{n//4}(ab)^{m//2}(ca)^{m}'
 text_words = 1000000
 
 
 if __name__ == '__main__':
-    regex_str_generator(f'(ab)^{n}(b)(ab)^{m}', 'res/regex_ab.txt')
-    # print(regex_str_generator(reg_ex, "res/regex_abc.txt"))
+    regex_str_generator(f'(a)^{n}(b)', file_path='res/regex_ab.txt', reps=reps)
+    # print(regex_str_generator(expr, "res/regex_abc.txt"))
     # regex_str_generator(f'(a)^{n}', 'res/regex_a.txt')
 # rand_str_generator(bin_alpha, 8, 8, text_words, "res/rand_bin.txt")

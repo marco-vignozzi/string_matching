@@ -1,6 +1,7 @@
 """^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 This module define the "Test" class.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"""
+import timeit
 import strmatch
 
 
@@ -8,21 +9,29 @@ import strmatch
 # TODO: add description of the class
 # ------------------------------------------------------------------------------------------------------------------- #
 class Test:
-    def __init__(self, text_file, pattern):
-        with open(text_file, "r", encoding='utf-8') as file:
-            self.text = file.read()
-        self.pattern = pattern
+    def __init__(self):
+        self.text = dict()
+        self.pattern = dict()
 
-        self.naive_offsets = strmatch.naive_sm(self.pattern, self.text)
-        self.kmp_offsets = strmatch.kmp_sm(self.pattern, self.text)
+        self.naive = dict()
+        self.naive['times'] = dict()
+        self.naive['offsets'] = dict()
 
-        self.naive_time = 0
-        self.kmp_time = 0
+        self.kmp = dict()
+        self.kmp['times'] = dict()
+        self.kmp['offsets'] = dict()
 
-    def run_naive_sm(self):
-        strmatch.naive_sm(self.pattern, self.text)
-        return
+    def run_test(self, pattern, text, n=0, test_rep=5, r=6):
+        def run_naive_sm():
+            strmatch.naive_sm(pattern, text)
+            return
 
-    def run_kmp_sm(self):
-        strmatch.kmp_sm(self.pattern, self.text)
-        return
+        def run_kmp_sm():
+            strmatch.kmp_sm(pattern, text)
+            return
+        self.pattern[n] = pattern
+        self.text[n] = text
+        self.naive['times'][n] = round(min(timeit.repeat(run_naive_sm, repeat=test_rep, number=1)), r)
+        self.kmp['times'][n] = round(min(timeit.repeat(run_kmp_sm, repeat=test_rep, number=1)), r)
+        self.kmp['offsets'][n] = strmatch.kmp_sm(pattern, text)
+        self.naive['offsets'][n] = strmatch.naive_sm(pattern, text)

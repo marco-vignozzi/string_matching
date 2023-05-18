@@ -27,8 +27,9 @@ def rand_str_generator(alphabet, min_l, max_l, text_l, file_path=None):
 
 
 # ------------------------------------------------------------------------------------------------------------------- #
-# This function returns a string which matches the syntax of the "expr" passed as a parameter.
-# The syntax should be given in a simil regular expression form (using BNF notation):
+# This function returns a string which matches the syntax of the "expr" passed as a parameter, repeated a "reps" number
+# of times.
+# The syntax should be given in a simil-regular expression form (using BNF notation):
 #
 # <syntax> ::= <sequence>[^<number>][<syntax>]
 # <sequence> ::= (<string>)
@@ -45,7 +46,7 @@ def regex_str_generator(expr, file_path=None, reps=1):
     elements = list()
     elements = [x for x in re.split("[() +]", expr) if x]
     final_str = ''
-    for r in range(0, reps+1):
+    for r in range(0, reps):
         for i in range(0, len(elements)):
             if elements[i][0] == '^':
                 pass
@@ -68,13 +69,12 @@ ab_alpha = list(['a', 'b'])
 hex_alpha = list(['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
 n = 100
 m = 1000
-reps = 10000
+reps = 1
 expr = f'(abc)^{n//3}(c)(ba)^{n//3}(c)^{n//4}(ab)^{m//2}(ca)^{m}'
-text_words = 1000000
-
+text_words = 100000
 
 if __name__ == '__main__':
-    regex_str_generator(f'(a)^{n}(b)', file_path='res/regex_ab.txt', reps=reps)
+    regex_str_generator(f'(a)^{10000}', file_path='res/regex_a.txt', reps=reps)
+    regex_str_generator(f'(a)^{99}(b)', file_path='res/regex_ab.txt', reps=100)
     # print(regex_str_generator(expr, "res/regex_abc.txt"))
-    # regex_str_generator(f'(a)^{n}', 'res/regex_a.txt')
 # rand_str_generator(bin_alpha, 8, 8, text_words, "res/rand_bin.txt")

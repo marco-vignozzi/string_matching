@@ -41,6 +41,11 @@ with open(src3, 'r', encoding='utf-8') as file:
     text3 = file.read()
 
 
+# t = test.Test('res/freedom.txt', 'freedom')
+#
+# print(t.naive_offsets)
+# print(len(t.naive_offsets))
+
 # ------------------------------------------------------------------------------------------------------------------- #
 # This is the first test case: we consider a sequence of 'a' with increasing length in range "start - stop" with
 # the given "step" as the queried pattern. The text is a longer sequence of 'a'.
@@ -117,4 +122,5 @@ print(f'kmp times: ' + f"{t3.kmp['times']}\n")
 #     [kmp.write(f'match with offset: {i}\n') for i in kmp['offsets']]
 #     kmp.write('---------------------------------\n' +
 #               f'total matches: {len(kmp['offsets'])}')
+#
 #

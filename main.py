@@ -3,6 +3,7 @@ In this module we run various tests from the test.py module in order to compare 
 in the strmatch.py module.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"""
 import numpy as np
+import os
 
 import strgenerator as sg
 import matplotlib.pyplot as plt
@@ -23,8 +24,56 @@ import test
 # It will create a plot comparing naive vs KMP times (y-axis) for the current test.
 # ------------------------------------------------------------------------------------------------------------------- #
 
-def create_docs():
-    pass
+def create_docs(test, dir_name):
+    if 'docs' not in os.listdir():
+        os.mkdir('docs')
+    if dir_name not in os.listdir('docs/'):
+        os.mkdir(f'docs/{dir_name}')
+
+    with open(f'docs/{dir_name}/offsets.txt', "w") as o:
+        o.write('\nOFFSETS\n\n' +
+                'Here is a list of the offsets found for this test case.\n\n' +
+                '-----------------------------------------------\n')
+        for n in test.pattern:
+            o.write('-----------------------------------------------\n' +
+                    f'PATTERN for n={n}: "{test.pattern[n]}"\n' +
+                    '-----------------------------------------------\n' +
+                    '-----------------------------------------------\n')
+            o.write('NAIVE offsets found:\n')
+            [o.write(f'match with offset: {i}\n') for i in test.naive['offsets'][n]]
+            o.write(f'total matches: {len(test.naive["offsets"][n])}\n' +
+                    '-----------------------------------------------\n')
+            o.write('KMP offsets found:\n')
+            [o.write(f'match with offset: {i}\n') for i in test.kmp['offsets'][n]]
+            o.write(f'total matches: {len(test.kmp["offsets"][n])}\n' +
+                    '-----------------------------------------------\n')
+
+    with open(f'docs/{dir_name}/times.txt', "w") as t:
+        t.write('\nTIMES\n\n' +
+                'Here is a list of the execution times for this test case.\n\n' +
+                '-----------------------------------------------\n')
+        for n in test.pattern:
+            t.write('-----------------------------------------------\n' +
+                    f'PATTERN for n={n}: "{test.pattern[n]}"\n' +
+                    '-----------------------------------------------\n' +
+                    '-----------------------------------------------\n')
+            t.write(f'NAIVE execution time: {test.naive["times"][n]}\n')
+            t.write('-----------------------------------------------\n')
+            t.write(f'KMP execution time: {test.kmp["times"][n]}\n')
+            t.write('-----------------------------------------------\n')
+
+    with open(f'docs/{dir_name}/texts.txt', "w") as txt:
+        txt.write('\nTEXTS\n\n' +
+                  'Here is a list of the texts used for this test case.\n\n' +
+                  '---------------------------------------------\n')
+        if test.text[0] != test.text[-1]:                   # FIXME: fix the KeyError
+            t.write(f'TEXT for n={n}: "{test.text[n]}"\n' +
+                    '-----------------------------------------------\n')
+        else:
+            t.write(f'SINGLE TEXT USED: "{test.text[n]}"\n' +
+                    '-----------------------------------------------\n')
+
+    return
 
 
 def create_plot(test, title, yscale):
@@ -33,7 +82,7 @@ def create_plot(test, title, yscale):
     n_values = np.array([i for i in test.naive['times']])
     plt.plot(n_values, naive_t, 'r-', n_values, kmp_t, 'b-')
     plt.legend(['Naive', 'KMP'])
-    plt.axis([min(n_values), 1.02*max(n_values), 0, yscale*max(naive_t[-1], kmp_t[-1])])
+    plt.axis([min(n_values), 1.02 * max(n_values), 0, yscale * max(naive_t[-1], kmp_t[-1])])
 
     plt.title(title)
     plt.show()
@@ -49,7 +98,7 @@ start = 100
 stop = 500
 step = 20
 text_div = 20
-test_suite = dict()
+# test_suite = dict()
 src1 = 'res/regex_a.txt'
 src2 = 'res/bible.txt'
 src3 = 'res/regex_ab.txt'
@@ -62,7 +111,6 @@ with open(src2, 'r', encoding='utf-8') as file:
 
 with open(src3, 'r', encoding='utf-8') as file:
     text3 = file.read()
-
 
 # t = test.Test('res/freedom.txt', 'freedom')
 #
@@ -78,7 +126,7 @@ with open(src3, 'r', encoding='utf-8') as file:
 # ------------------------------------------------------------------------------------------------------------------- #
 
 t1 = test.Test()
-for n in range(start, stop+1, step):
+for n in range(start, stop + 1, step):
     pattern = sg.regex_str_generator(f'(a)^{n}')
     t1.run_test(pattern, text1, n=n, test_rep=test_rep, r=5)
 
@@ -87,6 +135,7 @@ print(f'naive times: ' + f"{t1.naive['times']}\n")
 print(f'kmp times: ' + f"{t1.kmp['times']}\n")
 
 # create_plot(t1, 'Test 1', yscale=1.2)
+create_docs(t1, 'TEST1')
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # TEST 2
@@ -98,13 +147,14 @@ t2 = test.Test()
 pattern = 'And'
 for n in range(text_div, 0, -1):
     text = text2[0: len(text2) // n]
-    t2.run_test(pattern, text, n=abs(text_div-n+1), test_rep=test_rep, r=5)
+    t2.run_test(pattern, text, n=abs(text_div - n + 1), test_rep=test_rep, r=5)
 
 print("TEST 2 RESULTS")
 print(f'naive times: ' + f"{t2.naive['times']}\n")
 print(f'kmp times: ' + f"{t2.kmp['times']}\n")
 
 # create_plot(t2, 'Test 2', yscale=1.2)
+create_docs(t2, 'TEST2')
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # TEST 3
@@ -119,16 +169,14 @@ t3 = test.Test()
 pattern = sg.regex_str_generator(f'(a)^{100}')
 for n in range(text_div, 0, -1):
     text = text3[0: len(text3) // n]
-    t3.run_test(pattern, text, n=abs(text_div-n+1), test_rep=test_rep, r=5)
+    t3.run_test(pattern, text, n=abs(text_div - n + 1), test_rep=test_rep, r=5)
 
 print("TEST 3 RESULTS")
 print(f'naive times: ' + f"{t3.naive['times']}\n")
 print(f'kmp times: ' + f"{t3.kmp['times']}\n")
 
 create_plot(t3, 'Test 3', yscale=1.2)
-
-
-
+create_docs(t3, 'TEST3')
 
 # t3 = test.Test()
 # for n in range(start, stop+1, step):

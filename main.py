@@ -10,14 +10,24 @@ import test
 
 
 # ------------------------------------------------------------------------------------------------------------------- #
-# TODO: add description and code to this segment
+# TODO: add description and code for create_docs()
+# Here is the definition of 2 utility function that we will use to build our test's documentation:
+#
+# ***create_docs()***
+#
+# ***create_plot()***
+# This function takes 3 arguments:
+# - test: the test object referring the test of which you want to create the plot.
+# - title: the title of the plot.
+# - yscale: the scaling value of the y-axis as a float (it refers to the time values)
+# It will create a plot comparing naive vs KMP times (y-axis) for the current test.
 # ------------------------------------------------------------------------------------------------------------------- #
 
 def create_docs():
     pass
 
 
-def create_plots(test, title, yscale):
+def create_plot(test, title, yscale):
     naive_t = np.array([test.naive['times'][i] for i in test.naive['times']])
     kmp_t = np.array([test.kmp['times'][i] for i in test.kmp['times']])
     n_values = np.array([i for i in test.naive['times']])
@@ -64,9 +74,8 @@ with open(src3, 'r', encoding='utf-8') as file:
 # We consider a sequence of "a" with increasing length in range "start - stop" with the given "step" as the queried
 # pattern. The text is a sequence of 1 million of "a".
 # This test will consider the scenario where we search for a pattern which is always matched.
-# Test's data will be stored in a "Test" object, as for the others.
+# Test's data will be stored in a "Test" object, as for the others tests.
 # ------------------------------------------------------------------------------------------------------------------- #
-# TODO: add description to this test cases
 
 t1 = test.Test()
 for n in range(start, stop+1, step):
@@ -77,42 +86,46 @@ print("TEST 1 RESULTS")
 print(f'naive times: ' + f"{t1.naive['times']}\n")
 print(f'kmp times: ' + f"{t1.kmp['times']}\n")
 
-# create_plots(t1, 'Test 1', yscale=1.2)
+# create_plot(t1, 'Test 1', yscale=1.2)
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # TEST 2
-# Here we compare the algorithms with a text of increasing length, always searching for the same, short, and averagely
+# Here we compare the algorithms with a text of increasing length, searching for the same, short, and averagely
 # frequent pattern.
 # ------------------------------------------------------------------------------------------------------------------- #
 
 t2 = test.Test()
+pattern = 'And'
 for n in range(text_div, 0, -1):
     text = text2[0: len(text2) // n]
-    t2.run_test('And', text, n=abs(text_div-n-1), test_rep=test_rep, r=5)
+    t2.run_test(pattern, text, n=abs(text_div-n+1), test_rep=test_rep, r=5)
 
 print("TEST 2 RESULTS")
 print(f'naive times: ' + f"{t2.naive['times']}\n")
 print(f'kmp times: ' + f"{t2.kmp['times']}\n")
 
-# create_plots(t2, 'Test 2', yscale=1.2)
+# create_plot(t2, 'Test 2', yscale=1.2)
+
 # ------------------------------------------------------------------------------------------------------------------- #
 # TEST 3
-# Here the algorithms are compared with a text of 1 million chars. It is a repetition of a sequence composed by 100 "a"
+# Here the algorithms are compared with a text of 1 million chars. It is a repetition of a sequence composed by 99 "a"
 # followed by 1 "b".
 # The searched pattern is a sequence of "a" with increasing length in the usual (start - stop) range.
-# In this scenario we search for a pattern with a long prefix which matches the text, but it never matches completely.
+# In this scenario we search for a pattern with a long prefix matching the text, but it never matches completely.
+# The intent is to force the KMP algorithm to repeat his inner while cycle the maximum amount of times.
 # ------------------------------------------------------------------------------------------------------------------- #
 
 t3 = test.Test()
-for n in range(start, stop+1, step):
-    pattern = sg.regex_str_generator(f'a^{n}')
-    t3.run_test(pattern, text3, n=n, test_rep=test_rep, r=5)
+pattern = sg.regex_str_generator(f'(a)^{100}')
+for n in range(text_div, 0, -1):
+    text = text3[0: len(text3) // n]
+    t3.run_test(pattern, text, n=abs(text_div-n+1), test_rep=test_rep, r=5)
 
 print("TEST 3 RESULTS")
 print(f'naive times: ' + f"{t3.naive['times']}\n")
 print(f'kmp times: ' + f"{t3.kmp['times']}\n")
 
-create_plots(t3, 'Test 3', yscale=1.8)
+create_plot(t3, 'Test 3', yscale=1.2)
 
 
 

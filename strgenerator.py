@@ -74,7 +74,7 @@ expr = f'(abc)^{n//3}(c)(ba)^{n//3}(c)^{n//4}(ab)^{m//2}(ca)^{m}'
 text_words = 100000
 
 if __name__ == '__main__':
-    regex_str_generator(f'(a)^{10000}', file_path='res/regex_a.txt', reps=reps)
-    regex_str_generator(f'(a)^{99}(b)', file_path='res/regex_ab.txt', reps=100)
+#    regex_str_generator(f'(a)^{10000}', file_path='res/regex_a.txt', reps=reps)
+    regex_str_generator(f'(a)^{99}(b)', file_path='res/regex_ab.txt', reps=1000)
     # print(regex_str_generator(expr, "res/regex_abc.txt"))
 # rand_str_generator(bin_alpha, 8, 8, text_words, "res/rand_bin.txt")

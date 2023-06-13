@@ -24,7 +24,7 @@ import test
 # It will create a plot comparing naive vs KMP times (y-axis) for the current test.
 # ------------------------------------------------------------------------------------------------------------------- #
 
-def create_docs(test, dir_name):
+def create_docs(test, dir_name, plot_title, mono_txt=False):
     if 'docs' not in os.listdir():
         os.mkdir('docs')
     if dir_name not in os.listdir('docs/'):
@@ -65,27 +65,25 @@ def create_docs(test, dir_name):
     with open(f'docs/{dir_name}/texts.txt', "w") as txt:
         txt.write('\nTEXTS\n\n' +
                   'Here is a list of the texts used for this test case.\n\n' +
-                  '---------------------------------------------\n')
-        if test.text[0] != test.text[-1]:                   # FIXME: fix the KeyError
-            t.write(f'TEXT for n={n}: "{test.text[n]}"\n' +
+                  '-----------------------------------------------\n')
+        if mono_txt:
+            txt.write(f'UNIQUE TEXT USED: "{test.text[n]}"\n' +
                     '-----------------------------------------------\n')
         else:
-            t.write(f'SINGLE TEXT USED: "{test.text[n]}"\n' +
+            for n in test.text:
+                txt.write(f'TEXT for n={n}: "{test.text[n]}"\n' +
                     '-----------------------------------------------\n')
 
-    return
-
-
-def create_plot(test, title, yscale):
     naive_t = np.array([test.naive['times'][i] for i in test.naive['times']])
     kmp_t = np.array([test.kmp['times'][i] for i in test.kmp['times']])
     n_values = np.array([i for i in test.naive['times']])
     plt.plot(n_values, naive_t, 'r-', n_values, kmp_t, 'b-')
     plt.legend(['Naive', 'KMP'])
-    plt.axis([min(n_values), 1.02 * max(n_values), 0, yscale * max(naive_t[-1], kmp_t[-1])])
-
-    plt.title(title)
-    plt.show()
+    plt.axis([min(n_values), 1.02 * max(n_values), 0, 1.2 * max(naive_t[-1], kmp_t[-1])])
+    plt.xlabel('"n" value')
+    plt.ylabel('Execution time')
+    plt.title(plot_title)
+    plt.savefig(f'docs/{dir_name}/plot.png')
     return
 
 
@@ -95,10 +93,10 @@ def create_plot(test, title, yscale):
 
 test_rep = 5
 start = 100
-stop = 500
+stop = 200
 step = 20
 text_div = 20
-# test_suite = dict()
+
 src1 = 'res/regex_a.txt'
 src2 = 'res/bible.txt'
 src3 = 'res/regex_ab.txt'
@@ -134,8 +132,7 @@ print("TEST 1 RESULTS")
 print(f'naive times: ' + f"{t1.naive['times']}\n")
 print(f'kmp times: ' + f"{t1.kmp['times']}\n")
 
-# create_plot(t1, 'Test 1', yscale=1.2)
-create_docs(t1, 'TEST1')
+create_docs(t1, 'TEST1', plot_title='Always matching string', mono_txt=True)
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # TEST 2
@@ -153,30 +150,28 @@ print("TEST 2 RESULTS")
 print(f'naive times: ' + f"{t2.naive['times']}\n")
 print(f'kmp times: ' + f"{t2.kmp['times']}\n")
 
-# create_plot(t2, 'Test 2', yscale=1.2)
-create_docs(t2, 'TEST2')
+create_docs(t2, 'TEST2', plot_title='Average matching case', mono_txt=True)
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # TEST 3
-# Here the algorithms are compared with a text of 1 million chars. It is a repetition of a sequence composed by 99 "a"
-# followed by 1 "b".
-# The searched pattern is a sequence of "a" with increasing length in the usual (start - stop) range.
+# Here the algorithms are compared with a text of increasing length between 100.000/text_div and 100.000 chars with step
+# text_div. It is a repetition of a sequence composed by 99 "a" followed by 1 "b".
+# The searched pattern is a sequence of 100 "a".
 # In this scenario we search for a pattern with a long prefix matching the text, but it never matches completely.
 # The intent is to force the KMP algorithm to repeat his inner while cycle the maximum amount of times.
 # ------------------------------------------------------------------------------------------------------------------- #
 
 t3 = test.Test()
 pattern = sg.regex_str_generator(f'(a)^{100}')
-for n in range(text_div, 0, -1):
-    text = text3[0: len(text3) // n]
-    t3.run_test(pattern, text, n=abs(text_div - n + 1), test_rep=test_rep, r=5)
+for n in range(0, text_div + 1):
+    text = text3[0: len(text3) // text_div * n]
+    t3.run_test(pattern, text, n=n, test_rep=test_rep, r=5)
 
 print("TEST 3 RESULTS")
 print(f'naive times: ' + f"{t3.naive['times']}\n")
 print(f'kmp times: ' + f"{t3.kmp['times']}\n")
 
-create_plot(t3, 'Test 3', yscale=1.2)
-create_docs(t3, 'TEST3')
+create_docs(t3, 'TEST3', plot_title='Never matching string')
 
 # t3 = test.Test()
 # for n in range(start, stop+1, step):

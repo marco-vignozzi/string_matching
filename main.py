@@ -1,5 +1,5 @@
 """^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-In this module we run various tests from the test.py module in order to compare the string matching algorithms given
+In this module we run various tests with the test.py module in order to compare the string matching algorithms given
 in the strmatch.py module.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"""
 import numpy as np
@@ -11,79 +11,73 @@ import test
 
 
 # ------------------------------------------------------------------------------------------------------------------- #
-# TODO: add description and code for create_docs()
-# Here is the definition of 2 utility function that we will use to build our test's documentation:
+# The method below is an utility function that we will use to build our test's documentation.
+# This function takes the following arguments:
+# - test: the test object referring the test of which you want to create the documentation.
+# - dir_name: the directory name to which it saves the documentation. If it doesn't exist, it will be created in a
+#             subdirectory of the project named docs (if it doesn't exist, it will be created as well).
+# - plot_title: the title of the plot that will be created in the file "plot.png".
+# - xlabel: the label for the x-axis of the plot.
+# - mono_txt: it specifies if the test has been conducted on a unique test.
 #
-# ***create_docs()***
-#
-# ***create_plot()***
-# This function takes 3 arguments:
-# - test: the test object referring the test of which you want to create the plot.
-# - title: the title of the plot.
-# - yscale: the scaling value of the y-axis as a float (it refers to the time values)
-# It will create a plot comparing naive vs KMP times (y-axis) for the current test.
+# It will create 3 text files and a plot:
+# "offsets.txt": it will store the matching offsets found by the algorithms.
+# "times.txt": it will store their execution times.
+# "texts.txt": it will store the texts on which the test has been conducted.
+# "plot.png": it will store a plot comparing Naive vs KMP times for the current test.
 # ------------------------------------------------------------------------------------------------------------------- #
 
-def create_docs(test, dir_name, plot_title, mono_txt=False):
+def create_docs(test, dir_name, plot_title, xlabel, mono_txt=False):
     if 'docs' not in os.listdir():
         os.mkdir('docs')
     if dir_name not in os.listdir('docs/'):
         os.mkdir(f'docs/{dir_name}')
 
+    separator_str = '-----------------------------------------------\n'
+
     with open(f'docs/{dir_name}/offsets.txt', "w") as o:
         o.write('\nOFFSETS\n\n' +
-                'Here is a list of the offsets found for this test case.\n\n' +
-                '-----------------------------------------------\n')
+                'Here is a list of the offsets found for this test case.\n\n')
         for n in test.pattern:
-            o.write('-----------------------------------------------\n' +
-                    f'PATTERN for n={n}: "{test.pattern[n]}"\n' +
-                    '-----------------------------------------------\n' +
-                    '-----------------------------------------------\n')
+            o.write(separator_str +
+                    f'PATTERN for n={n}: "{test.pattern[n]}"\n' + separator_str)
             o.write('NAIVE offsets found:\n')
             [o.write(f'match with offset: {i}\n') for i in test.naive['offsets'][n]]
-            o.write(f'total matches: {len(test.naive["offsets"][n])}\n' +
-                    '-----------------------------------------------\n')
+            o.write(f'total matches: {len(test.naive["offsets"][n])}\n' + separator_str)
             o.write('KMP offsets found:\n')
             [o.write(f'match with offset: {i}\n') for i in test.kmp['offsets'][n]]
-            o.write(f'total matches: {len(test.kmp["offsets"][n])}\n' +
-                    '-----------------------------------------------\n')
+            o.write(f'total matches: {len(test.kmp["offsets"][n])}\n' + separator_str)
 
     with open(f'docs/{dir_name}/times.txt', "w") as t:
         t.write('\nTIMES\n\n' +
-                'Here is a list of the execution times for this test case.\n\n' +
-                '-----------------------------------------------\n')
+                'Here is a list of the execution times for this test case.\n\n')
         for n in test.pattern:
-            t.write('-----------------------------------------------\n' +
-                    f'PATTERN for n={n}: "{test.pattern[n]}"\n' +
-                    '-----------------------------------------------\n' +
-                    '-----------------------------------------------\n')
-            t.write(f'NAIVE execution time: {test.naive["times"][n]}\n')
-            t.write('-----------------------------------------------\n')
-            t.write(f'KMP execution time: {test.kmp["times"][n]}\n')
-            t.write('-----------------------------------------------\n')
+            t.write(separator_str +
+                    f'PATTERN for n={n}: "{test.pattern[n]}"\n' + separator_str)
+            t.write(f'NAIVE execution time: {test.naive["times"][n]}\n' + separator_str)
+            t.write(f'KMP execution time: {test.kmp["times"][n]}\n' + separator_str)
 
     with open(f'docs/{dir_name}/texts.txt', "w") as txt:
         txt.write('\nTEXTS\n\n' +
-                  'Here is a list of the texts used for this test case.\n\n' +
-                  '-----------------------------------------------\n')
+                  'Here is a list of the texts used for this test case.\n\n')
         if mono_txt:
-            txt.write(f'UNIQUE TEXT USED: "{test.text[n]}"\n' +
-                    '-----------------------------------------------\n')
+            txt.write(separator_str + f'UNIQUE TEXT USED: "{test.text[n]}"\n')
         else:
             for n in test.text:
-                txt.write(f'TEXT for n={n}: "{test.text[n]}"\n' +
-                    '-----------------------------------------------\n')
+                txt.write(separator_str + f'TEXT for n={n}: "{test.text[n]}"\n')
 
     naive_t = np.array([test.naive['times'][i] for i in test.naive['times']])
     kmp_t = np.array([test.kmp['times'][i] for i in test.kmp['times']])
     n_values = np.array([i for i in test.naive['times']])
     plt.plot(n_values, naive_t, 'r-', n_values, kmp_t, 'b-')
     plt.legend(['Naive', 'KMP'])
-    plt.axis([min(n_values), 1.02 * max(n_values), 0, 1.2 * max(naive_t[-1], kmp_t[-1])])
-    plt.xlabel('"n" value')
+    plt.xlim([min(n_values), 1.02 * max(n_values)])
+    plt.ylim([0, 1.2 * max(naive_t[-1], kmp_t[-1])])
+    plt.xlabel(xlabel)
     plt.ylabel('Execution time')
     plt.title(plot_title)
     plt.savefig(f'docs/{dir_name}/plot.png')
+    plt.clf()
     return
 
 
@@ -93,7 +87,7 @@ def create_docs(test, dir_name, plot_title, mono_txt=False):
 
 test_rep = 5
 start = 100
-stop = 200
+stop = 500
 step = 20
 text_div = 20
 
@@ -116,23 +110,42 @@ with open(src3, 'r', encoding='utf-8') as file:
 # print(len(t.naive_offsets))
 
 # ------------------------------------------------------------------------------------------------------------------- #
-# TEST 1
+# TEST 1M
 # We consider a sequence of "a" with increasing length in range "start - stop" with the given "step" as the queried
-# pattern. The text is a sequence of 1 million of "a".
+# pattern. The text is a sequence of 10.000 "a" chars.
 # This test will consider the scenario where we search for a pattern which is always matched.
 # Test's data will be stored in a "Test" object, as for the others tests.
+#
+# TEST 1N
+# The test is almost the same, but this time we consider a text with increasing length. In order to have a meaningful
+# comparison we create a 10 times bigger text then the previous one.
 # ------------------------------------------------------------------------------------------------------------------- #
 
-t1 = test.Test()
+t1m = test.Test()
 for n in range(start, stop + 1, step):
     pattern = sg.regex_str_generator(f'(a)^{n}')
-    t1.run_test(pattern, text1, n=n, test_rep=test_rep, r=5)
+    t1m.run_test(pattern, text1, n=n, test_rep=test_rep, r=5)
 
-print("TEST 1 RESULTS")
-print(f'naive times: ' + f"{t1.naive['times']}\n")
-print(f'kmp times: ' + f"{t1.kmp['times']}\n")
+print("TEST 1M RESULTS")
+print(f'naive times: ' + f"{t1m.naive['times']}\n")
+print(f'kmp times: ' + f"{t1m.kmp['times']}\n")
 
-create_docs(t1, 'TEST1', plot_title='Always matching string', mono_txt=True)
+create_docs(t1m, 'TEST1M', plot_title='Always matching pattern, growing pattern', xlabel='Pattern length', mono_txt=True)
+
+
+t1n = test.Test()
+text1 *= 10
+pattern = sg.regex_str_generator(f'(a)^{50}')
+for i in range(1, text_div + 1):
+    n = len(text1) // text_div * i
+    text = text1[0: n]
+    t1n.run_test(pattern, text, n=n, test_rep=test_rep, r=5)
+
+print("TEST 1N RESULTS")
+print(f'naive times: ' + f"{t1n.naive['times']}\n")
+print(f'kmp times: ' + f"{t1n.kmp['times']}\n")
+
+create_docs(t1n, 'TEST1N', plot_title='Always matching pattern, growing text', xlabel='Text length', mono_txt=True)
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # TEST 2
@@ -142,15 +155,16 @@ create_docs(t1, 'TEST1', plot_title='Always matching string', mono_txt=True)
 
 t2 = test.Test()
 pattern = 'And'
-for n in range(text_div, 0, -1):
-    text = text2[0: len(text2) // n]
-    t2.run_test(pattern, text, n=abs(text_div - n + 1), test_rep=test_rep, r=5)
+for i in range(1, text_div + 1):
+    n = len(text2) // text_div * i
+    text = text2[0: n]
+    t2.run_test(pattern, text, n=n, test_rep=test_rep, r=5)
 
 print("TEST 2 RESULTS")
 print(f'naive times: ' + f"{t2.naive['times']}\n")
 print(f'kmp times: ' + f"{t2.kmp['times']}\n")
 
-create_docs(t2, 'TEST2', plot_title='Average matching case', mono_txt=True)
+create_docs(t2, 'TEST2', plot_title='Average matching pattern', xlabel='Text length', mono_txt=True)
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # TEST 3
@@ -163,15 +177,16 @@ create_docs(t2, 'TEST2', plot_title='Average matching case', mono_txt=True)
 
 t3 = test.Test()
 pattern = sg.regex_str_generator(f'(a)^{100}')
-for n in range(0, text_div + 1):
-    text = text3[0: len(text3) // text_div * n]
+for i in range(1, text_div + 1):
+    n = len(text3) // text_div * i
+    text = text3[0: n]
     t3.run_test(pattern, text, n=n, test_rep=test_rep, r=5)
 
 print("TEST 3 RESULTS")
 print(f'naive times: ' + f"{t3.naive['times']}\n")
 print(f'kmp times: ' + f"{t3.kmp['times']}\n")
 
-create_docs(t3, 'TEST3', plot_title='Never matching string')
+create_docs(t3, 'TEST3', plot_title='Never matching pattern', xlabel='Text length')
 
 # t3 = test.Test()
 # for n in range(start, stop+1, step):

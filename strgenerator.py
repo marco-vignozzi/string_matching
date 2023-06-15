@@ -74,6 +74,6 @@ text_words = 100000
 
 if __name__ == '__main__':
     # regex_str_generator(f'(a)^{10000}', file_path='res/regex_a.txt', reps=reps)
-    regex_str_generator(f'(a)^{99}(b)', file_path='res/regex_ab.txt', reps=1000)
+    regex_str_generator(f'(a)^{49}(b)', file_path='res/regex_ab.txt', reps=2000)
     # print(regex_str_generator(expr, "res/regex_abc.txt"))
 # rand_str_generator(bin_alpha, 8, 8, text_words, "res/rand_bin.txt")

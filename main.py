@@ -11,7 +11,10 @@ import test
 
 
 # ------------------------------------------------------------------------------------------------------------------- #
-# The method below is an utility function that we will use to build our test's documentation.
+# The methods below are utility functions that we will use to build our test's documentation.
+#
+# ***create_docs()***
+#
 # This function takes the following arguments:
 # - test: the test object referring the test of which you want to create the documentation.
 # - dir_name: the directory name to which it saves the documentation. If it doesn't exist, it will be created in a
@@ -25,6 +28,11 @@ import test
 # "times.txt": it will store their execution times.
 # "texts.txt": it will store the texts on which the test has been conducted.
 # "plot.png": it will store a plot comparing Naive vs KMP times for the current test.
+# TODO: add create_plot() description
+#
+# ***create_plot()***
+#
+# This function creates a plot with 2 different value pairs.
 # ------------------------------------------------------------------------------------------------------------------- #
 
 def create_docs(test, dir_name, plot_title, xlabel, mono_txt=False):
@@ -69,14 +77,19 @@ def create_docs(test, dir_name, plot_title, xlabel, mono_txt=False):
     naive_t = np.array([test.naive['times'][i] for i in test.naive['times']])
     kmp_t = np.array([test.kmp['times'][i] for i in test.kmp['times']])
     n_values = np.array([i for i in test.naive['times']])
-    plt.plot(n_values, naive_t, 'r-', n_values, kmp_t, 'b-')
-    plt.legend(['Naive', 'KMP'])
-    plt.xlim([min(n_values), 1.02 * max(n_values)])
-    plt.ylim([0, 1.2 * max(naive_t[-1], kmp_t[-1])])
+    create_plot(n_values, naive_t, kmp_t, ['Naive', 'KMP'], xlabel, plot_title, f'docs/{dir_name}/plot.png')
+    return
+
+
+def create_plot(arr_x, arr_y1, arr_y2, legend, xlabel, title, path):
+    plt.plot(arr_x, arr_y1, 'r-', arr_x, arr_y2, 'b-')
+    plt.legend(legend)
+    plt.xlim([min(arr_x), 1.02 * max(arr_x)])
+    plt.ylim([0, 1.2 * max(arr_y1[-1], arr_y2[-1])])
     plt.xlabel(xlabel)
     plt.ylabel('Execution time')
-    plt.title(plot_title)
-    plt.savefig(f'docs/{dir_name}/plot.png')
+    plt.title(title)
+    plt.savefig(path)
     plt.clf()
     return
 
@@ -85,7 +98,7 @@ def create_docs(test, dir_name, plot_title, xlabel, mono_txt=False):
 # Here we can initialize some variables which will define the tests.
 # ------------------------------------------------------------------------------------------------------------------- #
 
-test_rep = 5
+test_rep = 10
 start = 100
 stop = 500
 step = 20
@@ -176,7 +189,7 @@ create_docs(t2, 'TEST2', plot_title='Average matching pattern', xlabel='Text len
 # ------------------------------------------------------------------------------------------------------------------- #
 
 t3 = test.Test()
-pattern = sg.regex_str_generator(f'(a)^{100}')
+pattern = sg.regex_str_generator(f'(a)^{50}')
 for i in range(1, text_div + 1):
     n = len(text3) // text_div * i
     text = text3[0: n]
@@ -188,7 +201,21 @@ print(f'kmp times: ' + f"{t3.kmp['times']}\n")
 
 create_docs(t3, 'TEST3', plot_title='Never matching pattern', xlabel='Text length')
 
-# t3 = test.Test()
+
+naive1n = np.array([t1n.naive['times'][i] for i in t1n.naive['times']])
+naive3 = np.array([t3.naive['times'][i] for i in t3.naive['times']])
+
+kmp1n = np.array([t1n.kmp['times'][i] for i in t1n.kmp['times']])
+kmp3 = np.array([t3.kmp['times'][i] for i in t3.kmp['times']])
+n_values = np.array([i for i in t1n.naive['times']])
+create_plot(n_values, naive1n, naive3, ['Always matching', 'Never matching'], 'Text length', 'Naive comparison: Always vs Never matching',
+            'docs/naive13.png')
+create_plot(n_values, kmp1n, kmp3, ['Always matching', 'Never matching'], 'Text length', 'KMP comparison: Always vs Never matching',
+            'docs/kmp13.png')
+
+
+
+   # t3 = test.Test()
 # for n in range(start, stop+1, step):
 #     pattern = sg.regex_str_generator(f'(abc)^{n//3}(c)(ba)^{n//3}(c)^{n//4}')
 #     t3.run_test(pattern, text3, n=n, test_rep=test_rep, r=5)

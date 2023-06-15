@@ -19,10 +19,11 @@ def naive_sm(pattern, text):
         j = 0
         while j != m and text[i + j] == pattern[j]:
             if j == m - 1:
-                offsets.append(i)
+                # offsets.append(i)
+                pass
             j += 1
-    return offsets
-
+    # return offsets
+    return []
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # The functions below implement the Knuth-Morris-Pratt (KMP) algorithm.
@@ -60,10 +61,12 @@ def kmp_sm(pattern, text):
         if pattern[q] == text[i]:
             q = q + 1
         if q == m:
-            offsets.append(i - q + 1)
+            # offsets.append(i - q + 1)
             q = pi[q - 1]
-    return offsets
-
+    # return offsets
+    return []
 
 if __name__ == '__main__':
     compute_pi_function(strgenerator.regex_str_generator("(a)^1001"))
+    text = open('res/regex_a.txt', 'r', encoding='utf-8').readline()
+    kmp_sm(strgenerator.regex_str_generator("(a)^50"), text)

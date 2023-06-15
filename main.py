@@ -35,7 +35,7 @@ import test
 # This function creates a plot with 2 different value pairs.
 # ------------------------------------------------------------------------------------------------------------------- #
 
-def create_docs(test, dir_name, plot_title, xlabel, mono_txt=False):
+def create_docs(test, dir_name, plot_title, xlabel, mono_txt=True):
     if 'docs' not in os.listdir():
         os.mkdir('docs')
     if dir_name not in os.listdir('docs/'):
@@ -98,7 +98,7 @@ def create_plot(arr_x, arr_y1, arr_y2, legend, xlabel, title, path):
 # Here we can initialize some variables which will define the tests.
 # ------------------------------------------------------------------------------------------------------------------- #
 
-test_rep = 10
+test_rep = 5
 start = 100
 stop = 500
 step = 20
@@ -143,7 +143,7 @@ print("TEST 1M RESULTS")
 print(f'naive times: ' + f"{t1m.naive['times']}\n")
 print(f'kmp times: ' + f"{t1m.kmp['times']}\n")
 
-create_docs(t1m, 'TEST1M', plot_title='Always matching pattern, growing pattern', xlabel='Pattern length', mono_txt=True)
+create_docs(t1m, 'TEST1M', plot_title='Always matching pattern, growing pattern', xlabel='Pattern length')
 
 
 t1n = test.Test()
@@ -158,7 +158,7 @@ print("TEST 1N RESULTS")
 print(f'naive times: ' + f"{t1n.naive['times']}\n")
 print(f'kmp times: ' + f"{t1n.kmp['times']}\n")
 
-create_docs(t1n, 'TEST1N', plot_title='Always matching pattern, growing text', xlabel='Text length', mono_txt=True)
+create_docs(t1n, 'TEST1N', plot_title='Always matching pattern, growing text', xlabel='Text length')
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # TEST 2
@@ -177,7 +177,8 @@ print("TEST 2 RESULTS")
 print(f'naive times: ' + f"{t2.naive['times']}\n")
 print(f'kmp times: ' + f"{t2.kmp['times']}\n")
 
-create_docs(t2, 'TEST2', plot_title='Average matching pattern', xlabel='Text length', mono_txt=True)
+create_docs(t2, 'TEST2', plot_title='Average matching pattern', xlabel='Text length')
+
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # TEST 3
@@ -199,15 +200,20 @@ print("TEST 3 RESULTS")
 print(f'naive times: ' + f"{t3.naive['times']}\n")
 print(f'kmp times: ' + f"{t3.kmp['times']}\n")
 
-create_docs(t3, 'TEST3', plot_title='Never matching pattern', xlabel='Text length')
+create_docs(t3, 'TEST3', plot_title='Never matching pattern', xlabel='Text length', mono_txt=False)
 
+# ------------------------------------------------------------------------------------------------------------------- #
+# COMPARISON
+# Here each algorithm is compared by himself according to the results in the TEST1N and TEST3.
+# We only create a plot for each comparison
+# ------------------------------------------------------------------------------------------------------------------- #
 
 naive1n = np.array([t1n.naive['times'][i] for i in t1n.naive['times']])
 naive3 = np.array([t3.naive['times'][i] for i in t3.naive['times']])
-
 kmp1n = np.array([t1n.kmp['times'][i] for i in t1n.kmp['times']])
 kmp3 = np.array([t3.kmp['times'][i] for i in t3.kmp['times']])
 n_values = np.array([i for i in t1n.naive['times']])
+
 create_plot(n_values, naive1n, naive3, ['Always matching', 'Never matching'], 'Text length', 'Naive comparison: Always vs Never matching',
             'docs/naive13.png')
 create_plot(n_values, kmp1n, kmp3, ['Always matching', 'Never matching'], 'Text length', 'KMP comparison: Always vs Never matching',
@@ -233,27 +239,3 @@ create_plot(n_values, kmp1n, kmp3, ['Always matching', 'Never matching'], 'Text 
 #
 # print(f'\nnaive times: ' + str([f"{naive['times'][i]: .6f}" for i in naive['times']]))
 # print(f'\nkmp times: ' + str([f"{kmp['times'][i]: .6f}" for i in kmp['times']]))
-
-# ------------------------------------------------------------------------------------------------------------------- #
-# Then it writes the results in 2 distinct files.
-# ------------------------------------------------------------------------------------------------------------------- #
-#
-# with open("docs/naive.txt", "w") as naive:
-#     naive.write('NAIVE ALGORITHM\n' +
-#                 '---------------------------------\n' +
-#                 f'searching for pattern "{pattern}"\n' +
-#                 '---------------------------------\n')
-#     [naive.write(f'match with offset: {i}\n') for i in naive['offsets']]
-#     naive.write('---------------------------------\n' +
-#                 f'total matches: {len(naive['offsets'])}')
-#
-# with open("docs/kmp.txt", "w") as kmp:
-#     kmp.write('KMP ALGORITHM\n' +
-#               '---------------------------------\n' +
-#               f'searching for pattern "{pattern}"\n' +
-#               '---------------------------------\n')
-#     [kmp.write(f'match with offset: {i}\n') for i in kmp['offsets']]
-#     kmp.write('---------------------------------\n' +
-#               f'total matches: {len(kmp['offsets'])}')
-#
-#

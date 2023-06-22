@@ -6,7 +6,7 @@ import strmatch
 
 
 # ------------------------------------------------------------------------------------------------------------------- #
-# TODO: add description of the class and the method
+# TODO: add description of the class and the methods
 # ------------------------------------------------------------------------------------------------------------------- #
 class Test:
     def __init__(self):

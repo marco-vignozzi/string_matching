@@ -12,18 +12,20 @@ import strgenerator
 # ------------------------------------------------------------------------------------------------------------------- #
 
 def naive_sm(pattern, text):
-    offsets = list()
+    # offsets = list()
+    matches = 0
     n = len(text)
     m = len(pattern)
-    for i in range(0, n - m):
+    for i in range(0, n - m + 1):
         j = 0
         while j != m and text[i + j] == pattern[j]:
             if j == m - 1:
                 # offsets.append(i)
-                pass
+                matches += 1
             j += 1
     # return offsets
-    return []
+    return matches
+
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # The functions below implement the Knuth-Morris-Pratt (KMP) algorithm.
@@ -34,6 +36,7 @@ def naive_sm(pattern, text):
 # chars in order to skip them, buying time.
 # The "kmp_sm()" function deals with the same input of the "naive_sm()" and has the same output.
 # ------------------------------------------------------------------------------------------------------------------- #
+
 
 def compute_pi_function(word):
     m = len(word)
@@ -50,7 +53,8 @@ def compute_pi_function(word):
 
 
 def kmp_sm(pattern, text):
-    offsets = list()
+    # offsets = list()
+    matches = 0
     n = len(text)
     m = len(pattern)
     pi = compute_pi_function(pattern)
@@ -62,9 +66,11 @@ def kmp_sm(pattern, text):
             q = q + 1
         if q == m:
             # offsets.append(i - q + 1)
+            matches += 1
             q = pi[q - 1]
     # return offsets
-    return []
+    return matches
+
 
 if __name__ == '__main__':
     compute_pi_function(strgenerator.regex_str_generator("(a)^1001"))

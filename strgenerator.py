@@ -2,7 +2,6 @@
 This module offers some utility functions for string and text files creation.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"""
 import random
-import re
 
 
 # ------------------------------------------------------------------------------------------------------------------- #
@@ -20,39 +19,7 @@ def rand_str_generator(alphabet, min_l, max_l, text_l, file_path=None):
         for j in range(0, rand_str_size):
             new_str += alphabet[random.randrange(0, 1001) % len(alphabet)]
         final_str += f'{new_str} '
-    if file_path:
-        with open(file_path, "w") as file:
-            file.write(final_str)
-    return final_str
-
-
-# ------------------------------------------------------------------------------------------------------------------- #
-# This function returns a string which matches the syntax of the "expr" passed as a parameter, repeated a "reps" number
-# of times.
-# The syntax should be given in a simil-regular expression form (using BNF notation):
-#
-# <syntax> ::= <sequence>[^<number>][<syntax>]
-# <sequence> ::= (<string>)
-# <string> ::= char | char<string>
-# <number> ::= positive_number
-#
-# by specifying every "positive_number" value as well as every "char" between parenthesis.
-# It's also possible to specify a "file_path" in which case the behavior is the same as above.
-# It doesn't support values choice i.e. (a + b) or (a)* .
-# ------------------------------------------------------------------------------------------------------------------- #
-
-def regex_str_generator(expr, file_path=None, reps=1):
-    elements = list()
-    elements = [x for x in re.split("[() +]", expr) if x]
-    final_str = ''
-    for r in range(0, reps):
-        for i in range(0, len(elements)):
-            if elements[i][0] == '^':
-                pass
-            elif i != len(elements)-1 and elements[i+1][0] == '^':
-                final_str += elements[i] * int(elements[i + 1].replace('^', ''))
-            else:
-                final_str += elements[i]
+    final_str = final_str[0: len(final_str)-1]
     if file_path:
         with open(file_path, "w") as file:
             file.write(final_str)
@@ -73,7 +40,4 @@ expr = f'(abc)^{n//3}(c)(ba)^{n//3}(c)^{n//4}(ab)^{m//2}(ca)^{m}'
 text_words = 100000
 
 if __name__ == '__main__':
-    # regex_str_generator(f'(a)^{10000}', file_path='res/regex_a.txt', reps=reps)
-    regex_str_generator(f'(a)^{49}(b)', file_path='res/regex_ab.txt', reps=2000)
-    # print(regex_str_generator(expr, "res/regex_abc.txt"))
-# rand_str_generator(bin_alpha, 8, 8, text_words, "res/rand_bin.txt")
+    rand_str_generator(hex_alpha, 100000, 100000, 1, "res/rand_hex.txt")

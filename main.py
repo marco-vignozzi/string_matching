@@ -24,15 +24,18 @@ import test
 # - mono_txt: it specifies if the test has been conducted on a unique test.
 #
 # It will create 3 text files and a plot:
-######################### "offsets.txt": it will store the matching offsets found by the algorithms.
-# "times.txt": it will store their execution times.
-# "texts.txt": it will store the texts on which the test has been conducted.
-# "plot.png": it will store a plot comparing Naive vs KMP times for the current test.
-# TODO: add create_plot() description
+######################### - "offsets.txt": it will store the matching offsets found by the algorithms.
+# - "matches.txt": it will store the number of matches for each algorithm.
+# - "times.txt": it will store their execution times.
+# - "texts.txt": it will store the texts on which the test has been conducted.
+# - "plot.png": it will store a plot comparing Naive vs KMP times for the current test.
 #
 # ***create_plot()***
 #
-# This function creates a plot with 2 different value pairs.
+# This function creates a plot with 2 different functions. It takes 3 lists as an input containing the values of the
+# functions to plot (x-axis values of 'arr_x' will be the same for both of them), a 'legend' (list of 2 strings
+# identifying the functions) the 'xlabel' (ylabel is always "Execution times"), a 'title' for the plot and the 'path'
+# where you want to save the resulting plot.
 # ------------------------------------------------------------------------------------------------------------------- #
 
 def create_docs(test, dir_name, plot_title, xlabel, mono_txt=False):
@@ -46,18 +49,18 @@ def create_docs(test, dir_name, plot_title, xlabel, mono_txt=False):
     with open(f'docs/{dir_name}/matches.txt', "w") as o:
         o.write('\nMATCHES\n\n' +
                 'Here is a list of the number of matches for this test case.\n\n')
-        for n in test.pattern:
+        for n in test.text:
             o.write(separator_str +
-                    f'PATTERN for n={n}: "{test.pattern[n]}"\n' + separator_str)
+                    f'PATTERN for n={n}: "{test.pattern}"\n' + separator_str)
             o.write(f"NAIVE matches: {test.naive['offsets'][n]}\n")
             o.write(f"KMP matches: {test.kmp['offsets'][n]}\n")
 
     # with open(f'docs/{dir_name}/offsets.txt', "w") as o:
         # o.write('\nOFFSETS\n\n' +
         #         'Here is a list of the offsets found for this test case.\n\n')
-        # for n in test.pattern:
+        # for n in test.text:
         #     o.write(separator_str +
-        #             f'PATTERN for n={n}: "{test.pattern[n]}"\n' + separator_str)
+        #             f'PATTERN for n={n}: "{test.pattern}"\n' + separator_str)
         #     o.write('NAIVE offsets found:\n')
         #     [o.write(f'match with offset: {i}\n') for i in test.naive['offsets'][n]]
         #     o.write(f'total matches: {len(test.naive["offsets"][n])}\n' + separator_str)
@@ -68,9 +71,9 @@ def create_docs(test, dir_name, plot_title, xlabel, mono_txt=False):
     with open(f'docs/{dir_name}/times.txt', "w") as t:
         t.write('\nTIMES\n\n' +
                 'Here is a list of the execution times for this test case.\n\n')
-        for n in test.pattern:
+        for n in test.text:
             t.write(separator_str +
-                    f'PATTERN for n={n}: "{test.pattern[n]}"\n' + separator_str)
+                    f'PATTERN for n={n}: "{test.pattern}"\n' + separator_str)
             t.write(f'NAIVE execution time: {test.naive["times"][n]}\n' + separator_str)
             t.write(f'KMP execution time: {test.kmp["times"][n]}\n' + separator_str)
 
@@ -104,28 +107,20 @@ def create_plot(arr_x, arr_y1, arr_y2, legend, xlabel, title, path):
 
 
 # ------------------------------------------------------------------------------------------------------------------- #
-# Here we can initialize some variables which will define the tests.
+# Here we can initialize some variables which will define the tests:
+# - test_rep: number of times each execution is repeated. It will afflict the precision of the execution times.
+# - text_div: number of parts in which the text is divided in each test.
+# - src1,src3: the paths to the .txt files used as text.
 # ------------------------------------------------------------------------------------------------------------------- #
 
 test_rep = 5
-start = 100
-stop = 500
-step = 20
 text_div = 20
 
 src1 = 'res/regex_a.txt'
-src2 = 'res/bible.txt'
-src2r = 'res/rand_hex.txt'
 src3 = 'res/regex_ab.txt'
 
 with open(src1, 'r', encoding='utf-8') as file:
     text1 = file.read()
-
-with open(src2r, 'r', encoding='utf-8') as file:
-    text2r = file.read()
-
-with open(src2, 'r', encoding='utf-8') as file:
-    text2 = file.read()
 
 with open(src3, 'r', encoding='utf-8') as file:
     text3 = file.read()
@@ -136,23 +131,17 @@ with open(src3, 'r', encoding='utf-8') as file:
 # print(len(t.naive_offsets))
 
 # ------------------------------------------------------------------------------------------------------------------- #
-# TEST 1M
-# We consider a sequence of "a" with increasing length in range "start - stop" with the given "step" as the queried
-# pattern. The text is a sequence of 10.000 "a" chars.
+# TEST 1
+# We consider a sequence of "a" with increasing length as the text, and we search for the pattern made by 50 "a".
 # This test will consider the scenario where we search for a pattern which is always matched.
 # Test's data will be stored in a "Test" object, as for the other tests.
-#
-# TEST 1N
-# The test is almost the same, but this time we consider a text with increasing length. In order to have a meaningful
-# comparison we create a 10 times bigger text then the previous one.
 # ------------------------------------------------------------------------------------------------------------------- #
 
-t1 = test.Test()
-pattern = 'a'*50
+t1 = test.Test('a'*50)
 for i in range(1, text_div + 1):
     n = len(text1) // text_div * i
     text = text1[0: n]
-    t1.run_test(pattern, text, n=n, test_rep=test_rep, r=5)
+    t1.run_test(text, n=n, test_rep=test_rep, r=5)
 
 print("TEST 1 RESULTS")
 print(f'naive times: ' + f"{t1.naive['times']}\n")
@@ -162,15 +151,14 @@ create_docs(t1, 'TEST1', plot_title='Always matching pattern, growing text', xla
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # TEST 2
-# Here we compare the algorithms with a text of increasing length, searching for the same, short, and averagely
-# frequent pattern.
+# Here we compare the algorithms searching the same random pattern in a text randomly generated on each iteration with
+# increasing length.
 # ------------------------------------------------------------------------------------------------------------------- #
 
-t2 = test.Test()
-pattern = sg.rand_str_generator(sg.hex_alpha, 4, 4, 1)
+t2 = test.Test(sg.rand_str_generator(sg.hex_alpha, 4, 4, 1))
 for i in range(1, text_div + 1):
     text = sg.rand_str_generator(sg.hex_alpha, i*20000, i*20000, 1)
-    t2.run_test(pattern, text, n=len(text), test_rep=test_rep, r=5)
+    t2.run_test(text, n=len(text), test_rep=test_rep, r=5)
 
 print("TEST 2 RESULTS")
 print(f'naive times: ' + f"{t2.naive['times']}\n")
@@ -181,18 +169,17 @@ create_docs(t2, 'TEST2', plot_title='Average matching pattern', xlabel='Text len
 # ------------------------------------------------------------------------------------------------------------------- #
 # TEST 3
 # Here the algorithms are compared with a text of increasing length between 100.000/text_div and 100.000 chars with step
-# text_div. It is a repetition of a sequence composed by 99 "a" followed by 1 "b".
-# The searched pattern is a sequence of 100 "a".
+# 100.000/text_div. It is a repetition of a sequence composed by 49 "a" followed by 1 "b".
+# The searched pattern is a sequence of 50 "a".
 # In this scenario we search for a pattern with a long prefix matching the text, but it never matches completely.
 # The intent is to force the KMP algorithm to repeat his inner while cycle the maximum amount of times.
 # ------------------------------------------------------------------------------------------------------------------- #
 
-t3 = test.Test()
-pattern = 'a'*50
+t3 = test.Test('a'*50)
 for i in range(1, text_div + 1):
     n = len(text3) // text_div * i
     text = text3[0: n]
-    t3.run_test(pattern, text, n=n, test_rep=test_rep, r=5)
+    t3.run_test(text, n=n, test_rep=test_rep, r=5)
 
 print("TEST 3 RESULTS")
 print(f'naive times: ' + f"{t3.naive['times']}\n")

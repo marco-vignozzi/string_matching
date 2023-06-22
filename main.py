@@ -201,24 +201,6 @@ print(f'kmp times: ' + f"{t3.kmp['times']}\n")
 create_docs(t3, 'TEST3', plot_title='Never matching pattern, worst case KMP', xlabel='Text length')
 
 # ------------------------------------------------------------------------------------------------------------------- #
-# TEST 4
-# TODO: add description
-# ------------------------------------------------------------------------------------------------------------------- #
-
-t4 = test.Test()
-pattern = 'c'*50
-for i in range(1, text_div + 1):
-    n = len(text1) // text_div * i
-    text = text1[0: n]
-    t4.run_test(pattern, text, n=n, test_rep=test_rep, r=5)
-
-print("TEST 4 RESULTS")
-print(f'naive times: ' + f"{t4.naive['times']}\n")
-print(f'kmp times: ' + f"{t4.kmp['times']}\n")
-
-create_docs(t4, 'TEST4', plot_title='Never matching pattern, growing text', xlabel='Text length')
-
-# ------------------------------------------------------------------------------------------------------------------- #
 # COMPARISON
 # Here each algorithm is compared by himself according to the results in the TEST1 and TEST3.
 # We only create a plot for each comparison.

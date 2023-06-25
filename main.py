@@ -32,13 +32,12 @@ import test
 #
 # ***create_plot()***
 #
-# This function creates a plot with 2 different functions. It takes 3 lists as an input containing the values of the
-# functions to plot (x-axis values of 'arr_x' will be the same for both of them), a 'legend' (list of 2 strings
-# identifying the functions) the 'xlabel' (ylabel is always "Execution times"), a 'title' for the plot and the 'path'
-# where you want to save the resulting plot.
+# This function creates a plot with 2 or 3 different functions. It takes 3 or 4 lists as an input, containing the values
+# of the functions to plot (x-axis values of 'arr_x' will be the same for all of them), a 'legend' (list of strings
+# identifying the functions), a 'title' for the plot and the 'path' where you want to save the resulting plot.
 # ------------------------------------------------------------------------------------------------------------------- #
 
-def create_docs(test, dir_name, plot_title, xlabel, mono_txt=False):
+def create_docs(test, dir_name, plot_title, mono_txt=False):
     if 'docs' not in os.listdir():
         os.mkdir('docs')
     if dir_name not in os.listdir('docs/'):
@@ -89,17 +88,26 @@ def create_docs(test, dir_name, plot_title, xlabel, mono_txt=False):
     naive_t = np.array([test.naive['times'][i] for i in test.naive['times']])
     kmp_t = np.array([test.kmp['times'][i] for i in test.kmp['times']])
     n_values = np.array([i for i in test.naive['times']])
-    create_plot(n_values, naive_t, kmp_t, ['Naive', 'KMP'], xlabel, plot_title, f'docs/{dir_name}/plot.png')
+    create_plot(n_values, naive_t, kmp_t, None, ['Naive', 'KMP'], plot_title, f'docs/{dir_name}/plot.png')
     return
 
 
-def create_plot(arr_x, arr_y1, arr_y2, legend, xlabel, title, path):
-    plt.plot(arr_x, arr_y1, 'r-', arr_x, arr_y2, 'b-')
-    plt.legend(legend)
-    plt.xlim([min(arr_x), 1.02 * max(arr_x)])
-    plt.ylim([0, 1.2 * max(arr_y1[-1], arr_y2[-1])])
-    plt.xlabel(xlabel)
-    plt.ylabel('Execution time')
+def create_plot(arr_x, arr_y1, arr_y2, arr_y3, legend, title, path, xlabel=''):
+    if arr_y3 is not None:
+        plt.plot(arr_x, arr_y1, 'r-', arr_x, arr_y2, 'b-', arr_x, arr_y3, 'g-')
+        plt.legend(legend)
+        plt.xlim([min(arr_x), 1.02 * max(arr_x)])
+        plt.ylim([0, 1.2 * max(arr_y1[-1], arr_y2[-1], arr_y3[-1])])
+    else:
+        plt.plot(arr_x, arr_y1, 'r-', arr_x, arr_y2, 'b-')
+        plt.legend(legend)
+        plt.xlim([min(arr_x), 1.02 * max(arr_x)])
+        plt.ylim([0, 1.2 * max(arr_y1[-1], arr_y2[-1])])
+    if xlabel == '':
+        plt.xlabel('Lunghezza testo')
+    else:
+        plt.xlabel(xlabel)
+    plt.ylabel('Tempo di esecuzione')
     plt.title(title)
     plt.savefig(path)
     plt.clf()
@@ -147,7 +155,7 @@ print("TEST 1 RESULTS")
 print(f'naive times: ' + f"{t1.naive['times']}\n")
 print(f'kmp times: ' + f"{t1.kmp['times']}\n")
 
-create_docs(t1, 'TEST1', plot_title='Always matching pattern, growing text', xlabel='Text length')
+create_docs(t1, 'TEST1', plot_title='TEST 1')
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # TEST 2
@@ -164,7 +172,7 @@ print("TEST 2 RESULTS")
 print(f'naive times: ' + f"{t2.naive['times']}\n")
 print(f'kmp times: ' + f"{t2.kmp['times']}\n")
 
-create_docs(t2, 'TEST2', plot_title='Average matching pattern', xlabel='Text length')
+create_docs(t2, 'TEST2', plot_title='TEST 2')
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # TEST 3
@@ -185,7 +193,7 @@ print("TEST 3 RESULTS")
 print(f'naive times: ' + f"{t3.naive['times']}\n")
 print(f'kmp times: ' + f"{t3.kmp['times']}\n")
 
-create_docs(t3, 'TEST3', plot_title='Never matching pattern, worst case KMP', xlabel='Text length')
+create_docs(t3, 'TEST3', plot_title='TEST 3')
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # COMPARISON
@@ -193,14 +201,25 @@ create_docs(t3, 'TEST3', plot_title='Never matching pattern, worst case KMP', xl
 # We only create a plot for each comparison.
 # ------------------------------------------------------------------------------------------------------------------- #
 
+t2c = test.Test(sg.rand_str_generator(sg.hex_alpha, 4, 4, 1))
+for i in range(1, text_div + 1):
+    text = sg.rand_str_generator(sg.hex_alpha, i*5000, i*5000, 1)
+    t2c.run_test(text, n=len(text), test_rep=test_rep, r=5)
+
+create_docs(t2c, 'TEST2C', plot_title='TEST 2C')
+
 naive1 = np.array([t1.naive['times'][i] for i in t1.naive['times']])
+naive2c = np.array([t2c.naive['times'][i] for i in t2c.naive['times']])
 naive3 = np.array([t3.naive['times'][i] for i in t3.naive['times']])
+
 kmp1 = np.array([t1.kmp['times'][i] for i in t1.kmp['times']])
+kmp2c = np.array([t2c.kmp['times'][i] for i in t2c.kmp['times']])
 kmp3 = np.array([t3.kmp['times'][i] for i in t3.kmp['times']])
+
 n_values = np.array([i for i in t1.naive['times']])
 
-create_plot(n_values, naive1, naive3, ['Always matching', 'Never matching'], 'Text length',
-            'Naive comparison: Always vs Never matching', 'docs/naive13.png')
-create_plot(n_values, kmp1, kmp3, ['Always matching', 'Never matching'], 'Text length',
-            'KMP comparison: Always vs Never matching', 'docs/kmp13.png')
+create_plot(n_values, naive1, naive2c, naive3, ['Test 1', 'Test 2', 'Test 3'],
+            'Confronto Naive', 'docs/naive_comp.png', xlabel='Lunghezza testo')
+create_plot(n_values, kmp1, kmp2c, kmp3, ['Test 1', 'Test 2', 'Test 3'],
+            'Confronto KMP', 'docs/kmp_comp.png', xlabel='Lunghezza testo')
 
